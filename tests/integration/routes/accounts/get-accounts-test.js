@@ -1,3 +1,4 @@
+var _ = require('lodash')
 var nock = require('nock')
 var test = require('tap').test
 
@@ -54,8 +55,45 @@ getServer(function (error, server) {
       t.end()
     })
 
-    group.test('Not an admin', {todo: true}, function (t) {
-      t.end()
+    group.test('Not an admin', function (t) {
+      // var couchdb =
+      mockCouchDbGetAccounts().reply(200, {
+        rows: [{
+          id: 'org.couchdb.user:pat-doe',
+          key: 'org.couchdb.user:pat-doe',
+          value: { rev: '1-234' },
+          doc: {
+            _id: 'org.couchdb.user:pat-doe',
+            _rev: '1-234',
+            name: 'pat-doe',
+            roles: ['id:abc4567']
+          }
+        }]
+      })
+
+      var requestOptions = _.defaultsDeep({
+        headers: {
+          // calculateSessionId('admin', '1081b31861bd1e91611341da16c11c16a12c13718d1f712e', 'secret', 1209600)
+          authorization: 'Bearer cGF0LWRvZToxMjc1MDA6zEZsQ1BuO-W8SthDSrg8KXQ8OlQ'
+        }
+      }, routeOptions)
+
+      // console.log(requestOptions)
+      // var requestOptions = {
+      //   method: 'GET',
+      //   url: '/accounts?include=profile',
+      //   headers: headers
+      // }
+
+      // debugger;
+      server.inject(requestOptions, function (response) {
+        console.log(response.result)
+        t.is(response.statusCode, 401, 'returns 401 status')
+        // t.is(response.result.error, 'Unauthorized', 'returns "Unauthorized" error')
+        // t.is(response.result.message, 'Authorization header missing', 'returns "Authorization header missing" error')
+        t.end()
+      })
+      group.end()
     })
 
     group.test('CouchDB Session valid', function (t) {

@@ -80,10 +80,15 @@ function accountRoutes (server, options, next) {
     handler: function (request, reply) {
       var sessionId = toBearerToken(request)
 
-      return accounts.findAll({
-        db: options.db,
-        bearerToken: sessionId,
-        include: request.query.include
+      console.log('validating session')
+      admins.validateSession(sessionId)
+
+      .then(function () {
+        return accounts.findAll({
+          db: options.db,
+          bearerToken: sessionId,
+          include: request.query.include
+        })
       })
 
       .then(function (accounts) {
@@ -96,7 +101,12 @@ function accountRoutes (server, options, next) {
       .then(reply)
 
       .catch(function (error) {
+        console.log(error)
+        if (error.message === 'Name or password is incorrect.') {
+          error.message = 'Session invalid'
+        }
         error = errors.parse(error)
+
         reply(Boom.create(error.status, error.message))
       })
     }
