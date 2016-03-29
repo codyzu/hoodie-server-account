@@ -80,10 +80,22 @@ function accountRoutes (server, options, next) {
     handler: function (request, reply) {
       var sessionId = toBearerToken(request)
 
-      return accounts.findAll({
-        db: options.db,
-        bearerToken: sessionId,
-        include: request.query.include
+      admins.validateSession(sessionId)
+
+      .catch(function (error) {
+        if (error.name === 'not_found') {
+          throw errors.INVALID_SESSION
+        }
+
+        throw error
+      })
+
+      .then(function () {
+        return accounts.findAll({
+          db: options.db,
+          bearerToken: sessionId,
+          include: request.query.include
+        })
       })
 
       .then(function (accounts) {
