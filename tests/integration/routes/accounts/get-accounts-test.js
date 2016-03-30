@@ -58,6 +58,7 @@ getServer(function (error, server) {
     group.test('Not an admin', function (t) {
       var requestOptions = _.defaultsDeep({
         headers: {
+          // Session ID based on 'pat-doe', 'salt123', 'secret', 1209600
           authorization: 'Bearer cGF0LWRvZToxMjc1MDA6zEZsQ1BuO-W8SthDSrg8KXQ8OlQ'
         }
       }, routeOptions)
