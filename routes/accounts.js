@@ -5,6 +5,7 @@ module.exports.attributes = {
 
 var Boom = require('boom')
 
+var dbErrors = require('pouchdb-errors')
 var errors = require('./utils/errors')
 var joiFailAction = require('./utils/joi-fail-action')
 var serialise = require('./utils/serialise-account')
@@ -83,7 +84,7 @@ function accountRoutes (server, options, next) {
       admins.validateSession(sessionId)
 
       .catch(function (error) {
-        if (error.name === 'not_found') {
+        if (error.toString() === dbErrors.MISSING_DOC.toString()) {
           throw errors.INVALID_SESSION
         }
 
