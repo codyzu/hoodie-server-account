@@ -160,7 +160,8 @@ function accountRoutes (server, options, next) {
         })
       })
 
-      .then(function () {
+      .then(function (account) {
+        console.log('new account: ', account)
         reply().code(204)
       })
 
