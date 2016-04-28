@@ -160,12 +160,21 @@ function accountRoutes (server, options, next) {
         })
       })
 
-      .then(function (account) {
-        console.log('new account: ', account)
-        reply().code(204)
+      .then(function () {
+        console.log('adding new session')
+        return sessions.add({
+          username: newUsername,
+          password: newPassword
+        })
+      })
+
+      .then(function (session) {
+        console.log('new account: ', session)
+        reply().code(204).headers('x-set-session', sessionId)
       })
 
       .catch(function (error) {
+        console.log('error:', error)
         error = errors.parse(error)
 
         reply(Boom.create(error.status, error.message))
