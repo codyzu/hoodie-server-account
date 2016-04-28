@@ -25,6 +25,7 @@ function updateAccount (state, idOrObject, change, options) {
   })
 
   .then(function (doc) {
+    console.log('doc: ', doc)
     return toAccount(doc, {
       includeProfile: options.include === 'profile'
     })
