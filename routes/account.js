@@ -160,11 +160,11 @@ function accountRoutes (server, options, next) {
         })
       })
 
-      .then(function () {
+      .then(function (account) {
         console.log('adding new session')
         return sessions.add({
-          username: newUsername,
-          password: newPassword
+          username: account.username,
+          password: newPassword // TODO make this work if we didn't update the password, ie || oldpassword
         })
       })
 
