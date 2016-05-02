@@ -162,15 +162,15 @@ function accountRoutes (server, options, next) {
 
       .then(function (account) {
         console.log('adding new session')
+        // no auth param, act as 'admin' since we already validated the old session above
         return sessions.add({
-          username: account.username,
-          password: newPassword // TODO make this work if we didn't update the password, ie || oldpassword
+          username: account.username
         })
       })
 
       .then(function (session) {
         console.log('new account: ', session)
-        reply().code(204).headers('x-set-session', sessionId)
+        reply().code(204).headers('x-set-session', session.id)
       })
 
       .catch(function (error) {
