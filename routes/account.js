@@ -161,20 +161,19 @@ function accountRoutes (server, options, next) {
       })
 
       .then(function (account) {
-        console.log('adding new session')
-        // no auth param, act as 'admin' since we already validated the old session above
+        // no auth param, act as 'admin' (we already validated the old session above)
         return sessions.add({
           username: account.username
         })
       })
 
       .then(function (session) {
-        console.log('new account: ', session)
-        reply().code(204).headers('x-set-session', session.id)
+        reply()
+          .code(204)
+          .header('x-set-session', session.id)
       })
 
       .catch(function (error) {
-        console.log('error:', error)
         error = errors.parse(error)
 
         reply(Boom.create(error.status, error.message))
