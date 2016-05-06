@@ -45,9 +45,13 @@ var routeOptions = {
   }
 }
 function responseMock () {
-  // user document gets fetched twice, once for session.find(),
-  // then for account.update(). We might improve that by implementing
+  // user document gets fetched 3 times:
+  // 1) session.find()
+  // 2) account.update()
+  // 3) session.add()
+  // We might improve that by implementing
   // an API like account.update({session: id}, change)
+  mockUserFound()
   mockUserFound()
   return mockUserFound()
     .post('/_users/_bulk_docs', function (body) {
@@ -138,7 +142,6 @@ getServer(function (error, server) {
           id: 'org.couchdb.user:pat-doe',
           rev: '2-3456'
         }])
-      mockUserFound()
       server.inject(routeOptions, function (response) {
         clock.uninstall()
 
